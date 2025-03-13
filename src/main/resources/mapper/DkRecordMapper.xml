@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.attendance.mapper.DkRecordMapper">
+
+    <resultMap type="com.example.attendance.domain.DkRecord" id="DkRecordResult">
+        <result property="id"    column="id"    />
+        <result property="username"    column="username"    />
+        <result property="checkInTime"    column="check_in_time"    />
+        <result property="checkOutTime"    column="check_out_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectDkRecordVo">
+        select id, username, check_in_time, check_out_time, del_flag, create_time, create_by, update_time, update_by from dk_record
+    </sql>
+
+    <select id="selectDkRecordList" parameterType="com.example.attendance.domain.DkRecord" resultMap="DkRecordResult">
+        <include refid="selectDkRecordVo"/>
+        <where>del_flag='0'
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="checkInTime != null "> and check_in_time = #{checkInTime}</if>
+            <if test="checkOutTime != null "> and check_out_time = #{checkOutTime}</if>
+        </where>
+    </select>
+
+    <select id="selectDkRecordById" parameterType="long" resultMap="DkRecordResult">
+        <include refid="selectDkRecordVo"/>
+        where del_flag='0' and id = #{id}
+    </select>
+
+    <insert id="insertDkRecord" parameterType="com.example.attendance.domain.DkRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into dk_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null">username,</if>
+            <if test="checkInTime != null">check_in_time,</if>
+            <if test="checkOutTime != null">check_out_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null">#{username},</if>
+            <if test="checkInTime != null">#{checkInTime},</if>
+            <if test="checkOutTime != null">#{checkOutTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDkRecord" parameterType="com.example.attendance.domain.DkRecord">
+        update dk_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null">username = #{username},</if>
+            <if test="checkInTime != null">check_in_time = #{checkInTime},</if>
+            <if test="checkOutTime != null">check_out_time = #{checkOutTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDkRecordById" parameterType="long">
+        update dk_record set del_flag='2' where id = #{id}
+    </delete>
+
+    <delete id="deleteDkRecordByIds" parameterType="string">
+        update dk_record set del_flag='2'where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
