@@ -2,6 +2,8 @@ package com.example.attendance.service.impl;
 
 import java.util.Date;
 import java.util.List;
+
+import com.example.attendance.config.auth.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.attendance.mapper.DkRecordMapper;
@@ -56,6 +58,7 @@ public class DkRecordServiceImpl implements IDkRecordService
     public int insertDkRecord(DkRecord dkRecord)
     {
         dkRecord.setCreateTime(new Date());
+        dkRecord.setCreateBy(UserUtil.getCurrentUsername());
         return dkRecordMapper.insertDkRecord(dkRecord);
     }
 
@@ -69,6 +72,7 @@ public class DkRecordServiceImpl implements IDkRecordService
     public int updateDkRecord(DkRecord dkRecord)
     {
         dkRecord.setUpdateTime(new Date());
+        dkRecord.setUpdateBy(UserUtil.getCurrentUsername());
         return dkRecordMapper.updateDkRecord(dkRecord);
     }
 
@@ -94,5 +98,24 @@ public class DkRecordServiceImpl implements IDkRecordService
     public int deleteDkRecordById(Long id)
     {
         return dkRecordMapper.deleteDkRecordById(id);
+    }
+
+    @Override
+    public int registry() {
+
+        DkRecord old = dkRecordMapper.selectUserToday(UserUtil.getCurrentUsername());
+        if (old == null) {
+            DkRecord dkRecord = new DkRecord();
+            dkRecord.setCheckInTime(new Date());
+            return insertDkRecord(dkRecord);
+        }else{
+            if (old.getCheckOutTime() == null) {
+                //下班打卡
+                old.setCheckOutTime(new Date());
+                return updateDkRecord(old);
+            }else{
+                return -32001;
+            }
+        }
     }
 }

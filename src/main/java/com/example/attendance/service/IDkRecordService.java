@@ -58,4 +58,8 @@ public interface IDkRecordService
      * @return 结果
      */
     public int deleteDkRecordById(Long id);
+
+    int registry();
+
+
 }

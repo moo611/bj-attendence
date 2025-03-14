@@ -5,28 +5,40 @@
 <mapper namespace="com.example.attendance.mapper.DkRecordMapper">
 
     <resultMap type="com.example.attendance.domain.DkRecord" id="DkRecordResult">
-        <result property="id"    column="id"    />
-        <result property="username"    column="username"    />
-        <result property="checkInTime"    column="check_in_time"    />
-        <result property="checkOutTime"    column="check_out_time"    />
-        <result property="delFlag"    column="del_flag"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="updateBy"    column="update_by"    />
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="checkInTime" column="check_in_time"/>
+        <result property="checkOutTime" column="check_out_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createName" column="create_name"/>
     </resultMap>
 
     <sql id="selectDkRecordVo">
-        select id, username, check_in_time, check_out_time, del_flag, create_time, create_by, update_time, update_by from dk_record
+        select id,
+               username,
+               check_in_time,
+               check_out_time,
+               del_flag,
+               create_time,
+               create_by,
+               update_time,
+               update_by
+        from dk_record
     </sql>
 
     <select id="selectDkRecordList" parameterType="com.example.attendance.domain.DkRecord" resultMap="DkRecordResult">
-        <include refid="selectDkRecordVo"/>
-        <where>del_flag='0'
-            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
-            <if test="checkInTime != null "> and check_in_time = #{checkInTime}</if>
-            <if test="checkOutTime != null "> and check_out_time = #{checkOutTime}</if>
+        select a.id, a.username, a.check_in_time, a.check_out_time, a.create_time, a.create_by, b.nickname create_name
+        from dk_record a
+        left join dk_user b on a.create_by = b.username
+        <where>a.del_flag='0'
+            <if test="createBy != null  and createBy != ''">and a.create_by = #{createBy}</if>
+
         </where>
+        order by a.create_time desc
     </select>
 
     <select id="selectDkRecordById" parameterType="long" resultMap="DkRecordResult">
@@ -34,7 +46,8 @@
         where del_flag='0' and id = #{id}
     </select>
 
-    <insert id="insertDkRecord" parameterType="com.example.attendance.domain.DkRecord" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertDkRecord" parameterType="com.example.attendance.domain.DkRecord" useGeneratedKeys="true"
+            keyProperty="id">
         insert into dk_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="username != null">username,</if>
@@ -74,7 +87,9 @@
     </update>
 
     <delete id="deleteDkRecordById" parameterType="long">
-        update dk_record set del_flag='2' where id = #{id}
+        update dk_record
+        set del_flag='2'
+        where id = #{id}
     </delete>
 
     <delete id="deleteDkRecordByIds" parameterType="string">
@@ -83,4 +98,12 @@
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectUserToday" parameterType="string" resultMap="DkRecordResult">
+
+        <include refid="selectDkRecordVo"/>
+        WHERE del_flag='0' and create_by = #{username}
+        AND DATE(create_time) = CURDATE()
+
+    </select>
 </mapper>

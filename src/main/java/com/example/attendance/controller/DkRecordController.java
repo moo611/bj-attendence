@@ -99,4 +99,18 @@ public class DkRecordController extends BaseController
     {
         return toAjax(dkRecordService.deleteDkRecordByIds(ids));
     }
+
+
+
+
+    @PostMapping("/registry")
+    public AjaxResult registry(){
+
+        int rows = dkRecordService.registry();
+        if (rows == -32001){
+            return AjaxResult.error("您今天已经打卡了");
+        }
+
+        return toAjax(rows);
+    }
 }

@@ -24,11 +24,11 @@ public class DkRecord extends BaseEntity
     private String username;
 
     /** $column.columnComment */
-    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date checkInTime;
 
     /** $column.columnComment */
-    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date checkOutTime;
 
 

@@ -60,4 +60,7 @@ public interface DkRecordMapper
      * @return 结果
      */
     public int deleteDkRecordByIds(Long[] ids);
+
+    DkRecord selectUserToday(String username);
+
 }
