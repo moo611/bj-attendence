@@ -20,7 +20,7 @@ import java.util.List;
 public class DkUserServiceImpl implements IDkUserService
 {
     @Autowired
-    private DkUserMapper sptUserMapper;
+    private DkUserMapper dkUserMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;  // 注入 PasswordEncode
     /**
@@ -32,58 +32,58 @@ public class DkUserServiceImpl implements IDkUserService
     @Override
     public DkUser selectDkUserById(Long id)
     {
-        return sptUserMapper.selectDkUserById(id);
+        return dkUserMapper.selectDkUserById(id);
     }
 
     /**
      * 查询用户列表
      *
-     * @param sptUser 用户
+     * @param dkUser 用户
      * @return 用户
      */
     @Override
-    public List<DkUser> selectDkUserList(DkUser sptUser)
+    public List<DkUser> selectDkUserList(DkUser dkUser)
     {
-        return sptUserMapper.selectDkUserList(sptUser);
+        return dkUserMapper.selectDkUserList(dkUser);
     }
 
     /**
      * 新增用户
      *
-     * @param sptUser 用户
+     * @param dkUser 用户
      * @return 结果
      */
     @Override
-    public int insertDkUser(DkUser sptUser)
+    public int insertDkUser(DkUser dkUser)
     {
-        DkUser old = sptUserMapper.selectDkUserByUsername(sptUser.getUsername());
+        DkUser old = dkUserMapper.selectDkUserByUsername(dkUser.getUsername());
         if (old != null){
             return -32001;
         }
-        String encodedPassword = passwordEncoder.encode(sptUser.getPassword());
-        sptUser.setPassword(encodedPassword);
-        sptUser.setCreateTime(new Date());
+        String encodedPassword = passwordEncoder.encode(dkUser.getPassword());
+        dkUser.setPassword(encodedPassword);
+        dkUser.setCreateTime(new Date());
         
-        return sptUserMapper.insertDkUser(sptUser);
+        return dkUserMapper.insertDkUser(dkUser);
     }
 
     /**
      * 修改用户
      *
-     * @param sptUser 用户
+     * @param dkUser 用户
      * @return 结果
      */
     @Override
-    public int updateDkUser(DkUser sptUser)
+    public int updateDkUser(DkUser dkUser)
     {
 
-        DkUser old = sptUserMapper.selectDkUserByUsername(sptUser.getUsername());
-        if (!old.getId().equals(sptUser.getId())){
+        DkUser old = dkUserMapper.selectDkUserByUsername(dkUser.getUsername());
+        if (!old.getId().equals(dkUser.getId())){
             return -32001;
         }
 
-        sptUser.setUpdateTime(new Date());
-        return sptUserMapper.updateDkUser(sptUser);
+        dkUser.setUpdateTime(new Date());
+        return dkUserMapper.updateDkUser(dkUser);
     }
 
     /**
@@ -95,7 +95,7 @@ public class DkUserServiceImpl implements IDkUserService
     @Override
     public int deleteDkUserByIds(Long[] ids)
     {
-        return sptUserMapper.deleteDkUserByIds(ids);
+        return dkUserMapper.deleteDkUserByIds(ids);
     }
 
     /**
@@ -107,11 +107,11 @@ public class DkUserServiceImpl implements IDkUserService
     @Override
     public int deleteDkUserById(Long id)
     {
-        return sptUserMapper.deleteDkUserById(id);
+        return dkUserMapper.deleteDkUserById(id);
     }
 
     @Override
     public DkUser selectRtUserByUsername(String username) {
-        return sptUserMapper.selectDkUserByUsername(username);
+        return dkUserMapper.selectDkUserByUsername(username);
     }
 }

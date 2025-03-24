@@ -25,26 +25,26 @@ public interface DkUserMapper
     /**
      * 查询用户列表
      *
-     * @param sptUser 用户
+     * @param dkUser 用户
      * @return 用户集合
      */
-    public List<DkUser> selectDkUserList(DkUser sptUser);
+    public List<DkUser> selectDkUserList(DkUser dkUser);
 
     /**
      * 新增用户
      *
-     * @param sptUser 用户
+     * @param dkUser 用户
      * @return 结果
      */
-    public int insertDkUser(DkUser sptUser);
+    public int insertDkUser(DkUser dkUser);
 
     /**
      * 修改用户
      *
-     * @param sptUser 用户
+     * @param dkUser 用户
      * @return 结果
      */
-    public int updateDkUser(DkUser sptUser);
+    public int updateDkUser(DkUser dkUser);
 
     /**
      * 删除用户
