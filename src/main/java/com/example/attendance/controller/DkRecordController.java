@@ -41,8 +41,8 @@ public class DkRecordController extends BaseController
      * 查询记录列表
      */
     
-    @GetMapping("/list")
-    public R list(DkRecordListReq dkRecordListReq)
+    @PostMapping("/list")
+    public R list(@RequestBody DkRecordListReq dkRecordListReq)
     {
         PageHelper.startPage(dkRecordListReq.getPageNum(), dkRecordListReq.getPageSize());
         DkRecord dkRecord = new DkRecord();

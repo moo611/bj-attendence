@@ -36,7 +36,10 @@
         left join dk_user b on a.create_by = b.username
         <where>a.del_flag='0'
             <if test="createBy != null  and createBy != ''">and a.create_by = #{createBy}</if>
-
+            <if test="checkOutTime != null">
+                and a.check_out_time is not null
+                and DATE(a.check_out_time) = DATE(#{checkOutTime})
+            </if>
         </where>
         order by a.create_time desc
     </select>
