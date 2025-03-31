@@ -1,11 +1,17 @@
 package com.example.attendance.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.example.attendance.domain.DkUser;
+import com.example.attendance.domain.req.FaceAddReq;
+import com.example.attendance.domain.req.FaceAddRequest;
 import com.example.attendance.mapper.DkUserMapper;
 import com.example.attendance.service.IDkUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.List;
@@ -19,6 +25,8 @@ import java.util.List;
 @Service
 public class DkUserServiceImpl implements IDkUserService
 {
+    @Autowired
+    RestTemplate restTemplate;
     @Autowired
     private DkUserMapper dkUserMapper;
     @Autowired
@@ -114,4 +122,151 @@ public class DkUserServiceImpl implements IDkUserService
     public DkUser selectRtUserByUsername(String username) {
         return dkUserMapper.selectDkUserByUsername(username);
     }
+
+    @Override
+    public int faceAdd(FaceAddReq faceAddReq) {
+        String token = getAccessToken();
+
+        FaceAddRequest faceAddRequest = new FaceAddRequest();
+        faceAddRequest.setImage(faceAddReq.getImage().split(",")[1]);
+        faceAddRequest.setImage_type("BASE64");
+        faceAddRequest.setGroup_id("002");
+        faceAddRequest.setUser_id(String.valueOf(faceAddReq.getUserId()));
+        String faceToken = addFace(faceAddRequest, token);
+        if (faceToken != null){
+
+            DkUser dkUser = dkUserMapper.selectDkUserById(faceAddReq.getUserId());
+            dkUser.setFaceToken(faceToken);
+            return dkUserMapper.updateDkUser(dkUser);
+        }
+
+        return 0;
+    }
+
+    @Override
+    public String faceCheck(FaceAddReq faceAddReq) {
+        String token = getAccessToken();
+
+        FaceAddRequest faceAddRequest = new FaceAddRequest();
+        faceAddRequest.setImage(faceAddReq.getImage().split(",")[1]);
+        faceAddRequest.setImage_type("BASE64");
+        faceAddRequest.setGroup_id_list("002");
+
+        return check(faceAddRequest, token);
+    }
+
+    String clientId = "WmARO855SfOoTEbSB7BEW2aH";
+    String clientSecret = "oKf6qZ3392hgmm1FJocwsWhIYBKUdfIg";
+
+    private String TOKEN_URL = "https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id="+clientId+"&client_secret="+clientSecret;
+
+    public String getAccessToken() {
+
+        // 设置请求头
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // 创建请求实体
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            // 发送POST请求
+            ResponseEntity<String> response = restTemplate.exchange(
+                    TOKEN_URL,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class);
+
+            // 使用FastJSON解析响应体
+            JSONObject jsonObject = JSONObject.parseObject(response.getBody());
+
+            // 获取access_token字段
+            return jsonObject.getString("access_token");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("获取百度Access Token失败", e);
+        }
+    }
+
+    private static final String FACE_ADD_URL = "https://aip.baidubce.com/rest/2.0/face/v3/faceset/user/add?access_token={accessToken}";
+
+    public String addFace(FaceAddRequest request,String accessToken) {
+        String faceToken = null;
+        // 1. 准备请求头
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 2. 创建请求实体
+        HttpEntity<FaceAddRequest> requestEntity = new HttpEntity<>(request, headers);
+
+        try {
+            // 3. 发送POST请求
+            ResponseEntity<String> response = restTemplate.exchange(
+                    FACE_ADD_URL,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class,
+                    accessToken  // URI变量替换{accessToken}
+            );
+
+            // 使用FastJSON解析响应体
+            JSONObject jsonObject = JSONObject.parseObject(response.getBody());
+
+            int errCode = jsonObject.getInteger("error_code");
+            if (errCode == 0 && jsonObject.getJSONObject("result")!=null){
+                faceToken = jsonObject.getJSONObject("result").getString("face_token");
+            }
+            return faceToken;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+
+            return faceToken;
+        }
+    }
+    
+    private static final String FACE_SEARCH_URL = "https://aip.baidubce.com/rest/2.0/face/v3/search?access_token={accessToken}";
+
+    private String check(FaceAddRequest request, String accessToken){
+        String userId = null;
+        // 1. 准备请求头
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 2. 创建请求实体
+        HttpEntity<FaceAddRequest> requestEntity = new HttpEntity<>(request, headers);
+
+        try {
+            // 3. 发送POST请求
+            ResponseEntity<String> response = restTemplate.exchange(
+                    FACE_SEARCH_URL,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class,
+                    accessToken  // URI变量替换{accessToken}
+            );
+
+            // 使用FastJSON解析响应体
+            JSONObject jsonObject = JSONObject.parseObject(response.getBody());
+
+            int errCode = jsonObject.getInteger("error_code");
+            if (errCode == 0 ){
+                JSONArray userList = jsonObject.getJSONObject("result").getJSONArray("user_list");
+                if (userList.size()>0){
+                    JSONObject user = userList.getJSONObject(0);
+                    int score = user.getInteger("score");
+                    if (score>=80){
+                        return user.getString("user_id");
+                    }
+                }
+
+            }
+            return userId;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+
+            return userId;
+        }
+
+    }
+    
 }

@@ -32,6 +32,17 @@ public class DkUser extends BaseEntity
     
     private String role;
 
+
+    public String getFaceToken() {
+        return faceToken;
+    }
+
+    public void setFaceToken(String faceToken) {
+        this.faceToken = faceToken;
+    }
+
+    String faceToken;
+
     /** 删除标识 */
     private String delFlag;
 

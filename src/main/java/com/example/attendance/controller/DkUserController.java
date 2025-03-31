@@ -6,6 +6,7 @@ import com.example.attendance.config.auth.UserUtil;
 import com.example.attendance.domain.DkUser;
 import com.example.attendance.domain.base.AjaxResult;
 import com.example.attendance.domain.base.R;
+import com.example.attendance.domain.req.FaceAddReq;
 import com.example.attendance.domain.req.LoginReq;
 import com.example.attendance.domain.req.DkUserListReq;
 import com.example.attendance.service.IDkUserService;
@@ -138,5 +139,25 @@ public class DkUserController extends BaseController {
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(dkUserService.deleteDkUserByIds(ids));
+    }
+
+
+    @PostMapping(value = "/face")
+    public AjaxResult face(@RequestBody FaceAddReq faceAddReq) {
+
+        return toAjax(dkUserService.faceAdd(faceAddReq));
+
+
+    }
+
+    @PostMapping("/faceCheck")
+    public AjaxResult faceCheck(@RequestBody FaceAddReq faceAddReq) {
+
+        String userId = dkUserService.faceCheck(faceAddReq);
+
+        if (userId != null) {
+            return AjaxResult.success(Long.valueOf(userId));
+        }
+        return AjaxResult.error("未识别人脸");
     }
 }

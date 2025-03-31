@@ -15,12 +15,12 @@
         <result property="createBy"    column="create_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="updateBy"    column="update_by"    />
-
+        <result property="faceToken"    column="face_token"    />
 
     </resultMap>
 
     <sql id="selectDkUserVo">
-        select id, username, password, nickname, `role`, del_flag, create_time, create_by, update_time, update_by from dk_user
+        select id, username, password, nickname, `role`, del_flag, create_time, create_by, update_time, update_by, face_token from dk_user
     </sql>
 
     <select id="selectDkUserList" parameterType="com.example.attendance.domain.DkUser" resultMap="DkUserResult">
@@ -55,7 +55,7 @@
             <if test="createBy != null">create_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="updateBy != null">update_by,</if>
-
+            <if test="faceToken != null">face_token,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -68,7 +68,7 @@
             <if test="createBy != null">#{createBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
-
+            <if test="faceToken != null">#{faceToken},</if>
         </trim>
     </insert>
 
@@ -84,7 +84,7 @@
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
-
+            <if test="faceToken != null">face_token = #{faceToken},</if>
         </trim>
         where id = #{id}
     </update>

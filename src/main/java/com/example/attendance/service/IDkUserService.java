@@ -1,6 +1,7 @@
 package com.example.attendance.service;
 
 import com.example.attendance.domain.DkUser;
+import com.example.attendance.domain.req.FaceAddReq;
 
 import java.util.List;
 
@@ -61,4 +62,9 @@ public interface IDkUserService
     public int deleteDkUserById(Long id);
 
     DkUser selectRtUserByUsername(String username);
+
+    int faceAdd(FaceAddReq faceAddReq);
+
+    String faceCheck(FaceAddReq faceAddReq);
+
 }
