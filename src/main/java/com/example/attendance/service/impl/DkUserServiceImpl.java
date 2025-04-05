@@ -125,6 +125,12 @@ public class DkUserServiceImpl implements IDkUserService
 
     @Override
     public int faceAdd(FaceAddReq faceAddReq) {
+
+        String userId = faceCheck(faceAddReq);
+        if (userId != null){
+            return -32001;
+        }
+
         String token = getAccessToken();
 
         FaceAddRequest faceAddRequest = new FaceAddRequest();

@@ -144,8 +144,11 @@ public class DkUserController extends BaseController {
 
     @PostMapping(value = "/face")
     public AjaxResult face(@RequestBody FaceAddReq faceAddReq) {
-
-        return toAjax(dkUserService.faceAdd(faceAddReq));
+        int res = dkUserService.faceAdd(faceAddReq);
+        if (res == -32001) {
+            return AjaxResult.error("已经录入了");
+        }
+        return toAjax(res);
 
 
     }
