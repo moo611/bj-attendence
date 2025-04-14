@@ -33,7 +33,7 @@
         </where>
     </select>
 
-    <select id="selectDkUserById" parameterType="string" resultMap="DkUserResult">
+    <select id="selectDkUserById" parameterType="long" resultMap="DkUserResult">
         <include refid="selectDkUserVo"/>
         where del_flag='0' and id = #{id}
     </select>
