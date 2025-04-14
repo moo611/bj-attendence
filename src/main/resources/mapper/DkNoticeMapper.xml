@@ -73,7 +73,7 @@
     </delete>
 
     <delete id="deleteDkNoticeByIds" parameterType="long">
-        update dk_notice set del_flag='2' dk_notice where id in
+        update dk_notice set del_flag='2' where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
