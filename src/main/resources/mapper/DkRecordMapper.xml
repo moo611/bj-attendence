@@ -109,4 +109,11 @@
         AND DATE(create_time) = CURDATE()
 
     </select>
+
+    <select id="selectCountToday" resultType="int">
+
+        select count(*) from dk_record where del_flag='0' and DATE(create_time) = CURDATE()
+
+    </select>
+
 </mapper>

@@ -63,4 +63,6 @@ public interface DkRecordMapper
 
     DkRecord selectUserToday(String username);
 
+    Integer selectCountToday();
+
 }

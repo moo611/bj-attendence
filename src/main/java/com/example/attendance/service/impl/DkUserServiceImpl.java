@@ -2,9 +2,14 @@ package com.example.attendance.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.example.attendance.domain.CountVO;
+import com.example.attendance.domain.DkRecord;
 import com.example.attendance.domain.DkUser;
+import com.example.attendance.domain.DkUserVO;
+import com.example.attendance.domain.req.DkUserRecordReq;
 import com.example.attendance.domain.req.FaceAddReq;
 import com.example.attendance.domain.req.FaceAddRequest;
+import com.example.attendance.mapper.DkRecordMapper;
 import com.example.attendance.mapper.DkUserMapper;
 import com.example.attendance.service.IDkUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +37,9 @@ public class DkUserServiceImpl implements IDkUserService
     private DkUserMapper dkUserMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;  // 注入 PasswordEncode
+    @Autowired
+    private DkRecordMapper dkRecordMapper;
+
     /**
      * 查询用户
      *
@@ -159,6 +168,40 @@ public class DkUserServiceImpl implements IDkUserService
         faceAddRequest.setGroup_id_list("002");
 
         return check(faceAddRequest, token);
+    }
+
+    @Override
+    public List<DkUserVO> selectDkUserRecord(DkUserRecordReq dkUserRecordReq) {
+
+        List<DkUserVO>userVOS = dkUserMapper.selectDkUserList2();
+
+        for (DkUserVO dkUserVO : userVOS){
+
+            DkRecord dkRecord = dkRecordMapper.selectUserToday(dkUserVO.getUsername());
+            if (dkRecord != null){
+                dkUserVO.setCheckInTime(dkRecord.getCheckInTime());
+                dkUserVO.setCheckOutTime(dkRecord.getCheckOutTime());
+            }
+
+        }
+
+        return userVOS;
+    }
+
+    @Override
+    public CountVO getStatics() {
+
+        CountVO countVO = new CountVO();
+
+        Integer total = dkUserMapper.selectCount();
+        Integer registered = dkRecordMapper.selectCountToday();
+        Integer unregistered = total-registered;
+
+        countVO.setTotal(total);
+        countVO.setRegistered(registered);
+        countVO.setUnregistered(unregistered);
+
+        return countVO;
     }
 
     String clientId = "WmARO855SfOoTEbSB7BEW2aH";

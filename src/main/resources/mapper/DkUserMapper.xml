@@ -18,6 +18,20 @@
         <result property="faceToken"    column="face_token"    />
 
     </resultMap>
+    <resultMap type="com.example.attendance.domain.DkUserVO" id="DkUserResult2">
+        <result property="id"    column="id"    />
+        <result property="username"    column="username"    />
+        <result property="password"    column="password"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="role"    column="role"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="faceToken"    column="face_token"    />
+
+    </resultMap>
 
     <sql id="selectDkUserVo">
         select id, username, password, nickname, `role`, del_flag, create_time, create_by, update_time, update_by, face_token from dk_user
@@ -40,6 +54,15 @@
     <select id="selectDkUserByUsername" parameterType="string" resultMap="DkUserResult">
         <include refid="selectDkUserVo"/>
         where del_flag='0' and username = #{username}
+    </select>
+
+    <select id="selectDkUserList2" resultMap="DkUserResult2">
+        <include refid="selectDkUserVo"/>
+        where del_flag='0' and role = '1'
+
+    </select>
+    <select id="selectCount" resultType="int">
+        select count(*) from dk_user where del_flag='0' and role = '1'
     </select>
 
     <insert id="insertDkUser" parameterType="com.example.attendance.domain.DkUser">

@@ -3,9 +3,12 @@ package com.example.attendance.controller;
 import com.example.attendance.config.auth.JwtUtil;
 import com.example.attendance.config.auth.MyUserDetailsService;
 import com.example.attendance.config.auth.UserUtil;
+import com.example.attendance.domain.DkRecord;
 import com.example.attendance.domain.DkUser;
+import com.example.attendance.domain.DkUserVO;
 import com.example.attendance.domain.base.AjaxResult;
 import com.example.attendance.domain.base.R;
+import com.example.attendance.domain.req.DkUserRecordReq;
 import com.example.attendance.domain.req.FaceAddReq;
 import com.example.attendance.domain.req.LoginReq;
 import com.example.attendance.domain.req.DkUserListReq;
@@ -162,5 +165,27 @@ public class DkUserController extends BaseController {
             return AjaxResult.success(Long.valueOf(userId));
         }
         return AjaxResult.error("未识别人脸");
+    }
+
+
+    @PostMapping("/record")
+    public R list(@RequestBody DkUserRecordReq dkUserRecordReq) {
+        PageHelper.startPage(dkUserRecordReq.getPageNum(), dkUserRecordReq.getPageSize());
+
+
+        List<DkUserVO> dkUsers = dkUserService.selectDkUserRecord(dkUserRecordReq);
+        if (dkUsers.size() > 0) {
+            PageInfo<DkUserVO> pageInfo = new PageInfo<>(dkUsers);
+            return R.ok(pageInfo);
+        }
+        return R.ok(new PageInfo<DkUserVO>(Collections.emptyList()));
+    }
+
+
+    @GetMapping("/statics")
+    public AjaxResult statics() {
+
+        return AjaxResult.success(dkUserService.getStatics());
+
     }
 }

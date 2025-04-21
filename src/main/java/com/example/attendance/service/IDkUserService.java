@@ -1,6 +1,9 @@
 package com.example.attendance.service;
 
+import com.example.attendance.domain.CountVO;
 import com.example.attendance.domain.DkUser;
+import com.example.attendance.domain.DkUserVO;
+import com.example.attendance.domain.req.DkUserRecordReq;
 import com.example.attendance.domain.req.FaceAddReq;
 
 import java.util.List;
@@ -67,4 +70,7 @@ public interface IDkUserService
 
     String faceCheck(FaceAddReq faceAddReq);
 
+    List<DkUserVO> selectDkUserRecord(DkUserRecordReq dkUserRecordReq);
+
+    CountVO getStatics();
 }

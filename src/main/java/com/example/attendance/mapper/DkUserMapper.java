@@ -1,6 +1,7 @@
 package com.example.attendance.mapper;
 
 import com.example.attendance.domain.DkUser;
+import com.example.attendance.domain.DkUserVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -63,5 +64,10 @@ public interface DkUserMapper
     public int deleteDkUserByIds(Long[] ids);
 
     DkUser selectDkUserByUsername(String username);
+
+    List<DkUserVO> selectDkUserList2();
+
+    Integer selectCount();
+
 
 }
